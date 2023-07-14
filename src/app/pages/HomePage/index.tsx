@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
+import TodoInput from './components/NotFoundPage/TodoInput';
+import TodoItem from './components/NotFoundPage/TodoItem';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -25,20 +27,27 @@ const Title = styled.h1`
 
 const TodoList = styled.div``;
 
-const TodoItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 15px 25px;
-  width: 100%;
-  font-size: 1.2em;
-  border-bottom: 1px solid #eee;
-`;
-
-const TodoCheck = styled.input`
-  margin-right: 15px;
-`;
-
 export function HomePage() {
+  const [todoList, setTodoList] = React.useState<ITodoItem[]>([
+    {
+      id: '1',
+      content: '첫번째 투두',
+      completed: true,
+      editing: false,
+    },
+    {
+      id: '2',
+      content: '두번째 투두',
+      completed: true,
+      editing: false,
+    },
+    {
+      id: '3',
+      content: '세번째 투두',
+      completed: false,
+      editing: false,
+    },
+  ]);
   return (
     <>
       <Helmet>
@@ -48,11 +57,13 @@ export function HomePage() {
       <Wrapper>
         <Box>
           <Title>할 일</Title>
+          <TodoInput
+            setTodoList={(todo: ITodoItem) => setTodoList([todo, ...todoList])}
+          />
           <TodoList>
-            <TodoItem>
-              <TodoCheck type="checkbox" />
-              나는 투두야
-            </TodoItem>
+            {todoList.map(todo => (
+              <TodoItem todo={todo} />
+            ))}
           </TodoList>
         </Box>
       </Wrapper>
