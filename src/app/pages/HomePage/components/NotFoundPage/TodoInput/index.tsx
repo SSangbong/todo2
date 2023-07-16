@@ -1,12 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Box = styled.div`
+const Box = styled.div<{ isEditing?: boolean }>`
   display: flex;
   align-items: center;
-  padding: 15px 25px;
-  width: 100%auto;
-  font-size: 1.1em;
+  padding: ${props => (props.isEditing ? '5px 0px' : '15px 25px')}
+  width: 100%;
   border-bottom: 1px solid #eee;
 `;
 
@@ -17,27 +16,39 @@ const Input = styled.input`
 `;
 
 export default function TodoInput({
-  setTodoList,
+  addTodo,
+  isEditing,
+  editContent,
+  editModeTodo,
+  editTodo,
 }: {
-  setTodoList: (todo: ITodoItem) => void;
+  addTodo?: (content: string) => void;
+  isEditing?: boolean;
+  editContent?: string;
+  editModeTodo?: () => void;
+  editTodo?: (content: string) => void;
 }) {
-  const [content, setContent] = React.useState<string>('');
+  const [content, setContent] = React.useState<string>(editContent || '');
   return (
-    <Box>
+    <Box isEditing={isEditing}>
       <Input
         placeholder="할일을 입력해 주세요"
         value={content}
+        onBlur={e => {
+          if (e.currentTarget === e.target) {
+            editTodo && editTodo(content);
+          }
+        }}
         onChange={e => setContent(e.target.value)}
         onKeyPress={e => {
           if (content === '') return;
           if (e.key !== 'Enter' && e.key !== 'NumpadEnter') return;
-          setTodoList({
-            id: '0',
-            content: content,
-            completed: false,
-            editing: false,
-          });
-          setContent('');
+          if (isEditing) {
+            editTodo && editTodo(content);
+          } else {
+            addTodo && addTodo(content);
+            setContent('');
+          }
         }}
       />
     </Box>
